@@ -221,13 +221,12 @@ EEPROM_Read:
 		   ldi    r18,0x00				; Set up address (r18:r17) in EEPROM address register
 		   ldi    r17,0x05
 		   ldi    r16,0x00   
-		   out    EEARH, r18   
-		   out    EEARL, r17		   
+		   out    EEARH,r18   
+		   out    EEARL,r17		   
 		   sbi    EECR,EERE				; Start eeprom read by writing EERE
 		   in     r16,EEDR				; Read data from Data Register
 		   sts    ASCII,r16  
 		   ret
-
 
 		   .end
 

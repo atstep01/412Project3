@@ -8,10 +8,11 @@
  
 const char MS1[] = "\r\nECE-412 ATMega328P Tiny OS";
 const char MS2[] = "\r\nby Eugene Rockey Copyright 2018, All Rights Reserved";
-const char MS3[] = "\r\nMenu: (L)CD, (A)CD, (E)EPROM\r\n";
+const char MS3[] = "\r\nMenu: (L)CD, (A)CD, (E)EPROM, (U)SART Parameters\r\n";
 const char MS4[] = "\r\nReady: ";
 const char MS5[] = "\r\nInvalid Command Try Again...";
 const char MS6[] = "Volts\r";
+const char MS7[] = "\r\nWhat Parameter Should Be Adjusted?:\n (B)aud rate, (D)ata bits, (P)arity. (S)top bits\r\n";
  
  
 
@@ -33,6 +34,11 @@ unsigned char DATA;				//shared internal variable with Assembly
 char HADC;						//shared ADC variable with Assembly
 char LADC;						//shared ADC variable with Assembly
 
+int UBBRValue = 0;				//shared variable for setting baud rate
+unsigned char UBBR0L;
+unsigned char UBBR0H;
+unsigned char UCSR0C;
+
 char volts[5];					//string buffer for ADC output
 int Acc;						//Accumulator for ADC use
 
@@ -40,7 +46,7 @@ void UART_Puts(const char *str)	//Display a string in the PC Terminal Program
 {
 	while (*str)                //While the current character is not the null character
 	{
-		ASCII = *str++;         //
+		ASCII = *str++;         
 		UART_Put();
 	}
 }
@@ -134,6 +140,160 @@ void EEPROM(void)
 	UART_Puts("\r\n");
 }
 
+void setBaud(int i){         //Helper function that changes the baud rate
+	UBBRValue = i;			 //Set UBBRBalue to preferred baud rate
+	UBBR0H = (unsigned char) (UBBRValue << 8); //Upper four bits of the baud rate go here.
+	UBBR0L = (unsigned char) UBBRValue;		   //The rest of the baud rate goes here.
+}
+
+void baudRouter(){
+	UART_Puts("What baud rate is preferable?\n1: 9600, 2: 14400, 3: 19200, 4: 28800, 5: 38400");
+	ASCII = '\0';
+	while(ASCII == '\0'){
+		
+		UART_Get();
+	}
+	switch(ASCII){
+		
+		case '1': setBaud(9600);
+		UART_Puts("Baud rate == 9600.\n UCSR0C: " + UCSR0C);
+		break;
+		case '2': setBaud(14400);
+		UART_Puts("Baud rate == 14400\n UCSR0C: " + UCSR0C);
+		break;
+		case '3': setBaud(19200);
+		UART_Puts("Baud rate == 19200");
+		break;
+		case '4': setBaud(28800);
+		UART_Puts("Baud rate == 28800");
+		break;
+		case '5': setBaud(38400);
+		UART_Puts("Baud rate == 38400");
+		break;
+		default:
+		UART_Puts(MS5);
+		HELP();
+		break;
+	}
+}
+
+void setDataBitNum(){
+	UART_Puts("How many data bits are preferable?\n 5, 6, 7, 8 , or 9 bits");
+	ASCII = '\0';
+	while(ASCII == '\0'){
+		
+		UART_Get();
+	}
+	switch(ASCII){
+		
+		case '5':
+		UCSR0C |= (0<<2)&&(0<<1); //if the bits 2-0 of UCSR0C == 000
+		UCSR0B |= (0<<2)
+		UART_Puts("# of Data Bits == 5");
+		break;
+		case '6':
+		UCSR0C |= (0<<2)&&(1<<1); //if bits 2-0 of UCSR0C == 001
+		UCSR0B |= (0<<2)
+		UART_Puts("# of Data Bits == 6");
+		break;
+		case '7':
+		UCSR0C |= (1<<2)&&(0<<1); //if bits 2-0 of UCSr0C == 010
+		UCSR0B |= (0<<2)
+		UART_Puts("# of Data Bits == 7");
+		break;
+		case '8':
+		UCSR0C |= (1<<2)&&(1<<1); //if bits 2-0 of USCR0C == 011
+		UCSR0B |= (0<<2)
+		UART_Puts("# of Data Bits == 8");
+		break;
+		case '9':
+		UCSR0C |= (1<<2)&&(1<<1); //if bits 2-0 of USCR0C == 111
+		UCSR0B |= (1<<2)
+		UART_Puts("# of Data Bits == 9");
+		break;
+		default:
+		UART_Puts(MS5);
+		HELP();
+		break;
+	}
+}
+
+void setParity(){
+	UART_Puts("What sort of parity is preferable?\n (N)o Parity, (O)dd parity, (E)ven Parity");
+	ASCII = '\0';
+	while(ASCII == '\0'){
+		
+		UART_Get();
+	}
+	switch(ASCII){
+		
+		case 'N' | 'n':
+		UCSR0C |= (0<<5)&&(0<<4);
+		UART_Puts("Parity == No Parity");
+		break;
+		case 'O' | 'o':
+		UCSR0C |= (1<<5)&&(1<<4);
+		UART_Puts("Parity == Odd Parity");
+		break;
+		case 'E' | 'e':
+		UCSR0C |= (1<<5)&&(0<<4);
+		UART_Puts("Parity == Even Parity");
+		break;
+		default:
+		UART_Puts(MS5);
+		HELP();
+		break;
+	}
+}
+
+void setStopBitNum(){
+	UART_Puts("How many stops bits is preferable?\n (1) bit or (2) bits");
+	ASCII = '\0';
+	while(ASCII == '\0'){
+		
+		UART_Get();
+	}
+	switch(ASCII){
+		
+		case '1':
+		UCSR0C |= (0<<3);
+		UART_Puts("# of Stop Bits == 1");
+		break;
+		case '2':
+		UCSR0C |= (1<<3);
+		UART_Puts("# of Stop Bits == 2");
+		break;
+		default:
+		UART_Puts(MS5);
+		HELP();
+		break;
+	}
+}
+
+void Params(void)					//Router for  USART parameter changes
+{
+	UART_Puts(MS7);
+	ASCII = '\0';
+	while(ASCII == '\0'){
+		
+		UART_Get();
+	}
+	switch(ASCII){                  //For each parameter change send to another router which handles setting the parameter.
+		
+		case 'B' | 'b': baudRouter();
+		break;
+		case 'D' | 'd': setDataBitNum();
+		break;
+		case 'P' | 'p': setParity();
+		break;
+		case 'S' | 's': setStopBitNum();
+		break;
+		default:
+		UART_Puts(MS5);
+		HELP();
+		break;
+	}
+}
 
 void Command(void)					//command interpreter
 {
@@ -151,10 +311,14 @@ void Command(void)					//command interpreter
 		break;
 		case 'E' | 'e': EEPROM();
 		break;
+		case 'U' | 'u': Params();   //Send USART parameter changes to another router   
+		break;
 		default:
 		UART_Puts(MS5);
 		HELP();
-		break;  			//Add a 'USART' command and subroutine to allow the user to reconfigure the 						//serial port parameters during runtime. Modify baud rate, # of data bits, parity, 							//# of stop bits.
+		break;  					//Add a 'USART' command and subroutine to allow the user to reconfigure the 						
+									//serial port parameters during runtime. Modify baud rate, # of data bits, parity, 							
+									//# of stop bits.
 	}
 }
 
