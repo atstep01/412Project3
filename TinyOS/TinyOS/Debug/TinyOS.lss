@@ -3,31 +3,31 @@ TinyOS.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         000003b0  00800100  0000069e  00000732  2**0
+  0 .data         000003b0  00800100  000006a8  0000073c  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         0000069e  00000000  00000000  00000094  2**1
+  1 .text         000006a8  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          0000000d  008004b0  008004b0  00000ae2  2**0
+  2 .bss          0000000d  008004b0  008004b0  00000aec  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  00000ae2  2**0
+  3 .comment      00000030  00000000  00000000  00000aec  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000b14  2**2
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000b1c  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 000000b0  00000000  00000000  00000b58  2**3
+  5 .debug_aranges 000000b0  00000000  00000000  00000b60  2**3
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   000013a2  00000000  00000000  00000c08  2**0
+  6 .debug_info   000013a2  00000000  00000000  00000c10  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00000a1e  00000000  00000000  00001faa  2**0
+  7 .debug_abbrev 00000a1e  00000000  00000000  00001fb2  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00000979  00000000  00000000  000029c8  2**0
+  8 .debug_line   0000097f  00000000  00000000  000029d0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000128  00000000  00000000  00003344  2**2
+  9 .debug_frame  00000128  00000000  00000000  00003350  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000559  00000000  00000000  0000346c  2**0
+ 10 .debug_str    00000559  00000000  00000000  00003478  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    000000f7  00000000  00000000  000039c5  2**0
+ 11 .debug_loc    000000f7  00000000  00000000  000039d1  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000080  00000000  00000000  00003abc  2**0
+ 12 .debug_ranges 00000080  00000000  00000000  00003ac8  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -91,7 +91,7 @@ Disassembly of section .text:
   c0:	14 e0       	ldi	r17, 0x04	; 4
   c2:	a0 e0       	ldi	r26, 0x00	; 0
   c4:	b1 e0       	ldi	r27, 0x01	; 1
-  c6:	ee e9       	ldi	r30, 0x9E	; 158
+  c6:	e8 ea       	ldi	r30, 0xA8	; 168
   c8:	f6 e0       	ldi	r31, 0x06	; 6
   ca:	02 c0       	rjmp	.+4      	; 0xd0 <UDR0+0xa>
   cc:	05 90       	lpm	r0, Z+
@@ -113,8 +113,8 @@ Disassembly of section .text:
   e0:	ad 3b       	cpi	r26, 0xBD	; 189
   e2:	b2 07       	cpc	r27, r18
   e4:	e1 f7       	brne	.-8      	; 0xde <.do_clear_bss_loop>
-  e6:	0e 94 1e 03 	call	0x63c	; 0x63c <main>
-  ea:	0c 94 4d 03 	jmp	0x69a	; 0x69a <_exit>
+  e6:	0e 94 23 03 	call	0x646	; 0x646 <main>
+  ea:	0c 94 52 03 	jmp	0x6a4	; 0x6a4 <_exit>
 
 000000ee <__bad_interrupt>:
   ee:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -565,27 +565,27 @@ void HELP(void)						//Display available Tiny OS Commands on Terminal
 
 void LCD(void)						//Lite LCD demo
 {
-	DATA = 0x34;					//Student Comment Here
+	DATA = 0x34;					//Function Set
  29e:	84 e3       	ldi	r24, 0x34	; 52
  2a0:	80 93 b2 04 	sts	0x04B2, r24	; 0x8004b2 <DATA>
 	LCD_Write_Command();
  2a4:	0e 94 9a 00 	call	0x134	; 0x134 <LCD_Write_Command>
-	DATA = 0x08;					//Student Comment Here
+	DATA = 0x08;					//Display Off
  2a8:	88 e0       	ldi	r24, 0x08	; 8
  2aa:	80 93 b2 04 	sts	0x04B2, r24	; 0x8004b2 <DATA>
 	LCD_Write_Command();
  2ae:	0e 94 9a 00 	call	0x134	; 0x134 <LCD_Write_Command>
-	DATA = 0x02;					//Student Comment Here
+	DATA = 0x02;					//Return Home
  2b2:	82 e0       	ldi	r24, 0x02	; 2
  2b4:	80 93 b2 04 	sts	0x04B2, r24	; 0x8004b2 <DATA>
 	LCD_Write_Command();
  2b8:	0e 94 9a 00 	call	0x134	; 0x134 <LCD_Write_Command>
-	DATA = 0x06;					//Student Comment Here
+	DATA = 0x06;					//Entry Mode Set - I
  2bc:	86 e0       	ldi	r24, 0x06	; 6
  2be:	80 93 b2 04 	sts	0x04B2, r24	; 0x8004b2 <DATA>
 	LCD_Write_Command();
  2c2:	0e 94 9a 00 	call	0x134	; 0x134 <LCD_Write_Command>
-	DATA = 0x0f;					//Student Comment Here
+	DATA = 0x0f;					//Display On
  2c6:	8f e0       	ldi	r24, 0x0F	; 15
  2c8:	80 93 b2 04 	sts	0x04B2, r24	; 0x8004b2 <DATA>
 	LCD_Write_Command();
@@ -640,7 +640,7 @@ void ADC(void)						//Lite Demo of the Analog to Digital Converter
  318:	ee ef       	ldi	r30, 0xFE	; 254
  31a:	f7 e0       	ldi	r31, 0x07	; 7
  31c:	bf 01       	movw	r22, r30
- 31e:	0e 94 25 03 	call	0x64a	; 0x64a <__divmodhi4>
+ 31e:	0e 94 2a 03 	call	0x654	; 0x654 <__divmodhi4>
  322:	26 2f       	mov	r18, r22
  324:	30 e3       	ldi	r19, 0x30	; 48
  326:	36 0f       	add	r19, r22
@@ -659,7 +659,7 @@ void ADC(void)						//Lite Demo of the Analog to Digital Converter
  33c:	84 0f       	add	r24, r20
  33e:	95 1f       	adc	r25, r21
  340:	bf 01       	movw	r22, r30
- 342:	0e 94 25 03 	call	0x64a	; 0x64a <__divmodhi4>
+ 342:	0e 94 2a 03 	call	0x654	; 0x654 <__divmodhi4>
  346:	30 e3       	ldi	r19, 0x30	; 48
  348:	36 0f       	add	r19, r22
  34a:	3a 83       	std	Y+2, r19	; 0x02
@@ -888,12 +888,12 @@ void setDataBitNum(){
  484:	41 f0       	breq	.+16     	; 0x496 <setDataBitNum+0x32>
  486:	86 33       	cpi	r24, 0x36	; 54
  488:	59 f0       	breq	.+22     	; 0x4a0 <setDataBitNum+0x3c>
- 48a:	28 c0       	rjmp	.+80     	; 0x4dc <setDataBitNum+0x78>
+ 48a:	2d c0       	rjmp	.+90     	; 0x4e6 <setDataBitNum+0x82>
  48c:	88 33       	cpi	r24, 0x38	; 56
  48e:	91 f0       	breq	.+36     	; 0x4b4 <setDataBitNum+0x50>
  490:	89 33       	cpi	r24, 0x39	; 57
  492:	d1 f0       	breq	.+52     	; 0x4c8 <setDataBitNum+0x64>
- 494:	23 c0       	rjmp	.+70     	; 0x4dc <setDataBitNum+0x78>
+ 494:	28 c0       	rjmp	.+80     	; 0x4e6 <setDataBitNum+0x82>
 		
 		case '5':
 		UCSR0C |= (0<<2)&&(0<<1); //if the bits 2-0 of UCSR0C == 000
@@ -939,361 +939,364 @@ void setDataBitNum(){
  4c8:	80 91 c2 00 	lds	r24, 0x00C2	; 0x8000c2 <__TEXT_REGION_LENGTH__+0x7e00c2>
  4cc:	81 60       	ori	r24, 0x01	; 1
  4ce:	80 93 c2 00 	sts	0x00C2, r24	; 0x8000c2 <__TEXT_REGION_LENGTH__+0x7e00c2>
-		//UCSR0B |= (1<<2);
+		UCSR0B |= (1<<2);
+ 4d2:	80 91 c1 00 	lds	r24, 0x00C1	; 0x8000c1 <__TEXT_REGION_LENGTH__+0x7e00c1>
+ 4d6:	84 60       	ori	r24, 0x04	; 4
+ 4d8:	80 93 c1 00 	sts	0x00C1, r24	; 0x8000c1 <__TEXT_REGION_LENGTH__+0x7e00c1>
 		UART_Puts("\r\n# of Data Bits = 9\r\n");
- 4d2:	83 e8       	ldi	r24, 0x83	; 131
- 4d4:	92 e0       	ldi	r25, 0x02	; 2
- 4d6:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
+ 4dc:	83 e8       	ldi	r24, 0x83	; 131
+ 4de:	92 e0       	ldi	r25, 0x02	; 2
+ 4e0:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
 		break;
- 4da:	08 95       	ret
+ 4e4:	08 95       	ret
 		default:
 		UART_Puts(MS5);
- 4dc:	8d ef       	ldi	r24, 0xFD	; 253
- 4de:	93 e0       	ldi	r25, 0x03	; 3
- 4e0:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
+ 4e6:	8d ef       	ldi	r24, 0xFD	; 253
+ 4e8:	93 e0       	ldi	r25, 0x03	; 3
+ 4ea:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
 		HELP();
- 4e4:	0e 94 4a 01 	call	0x294	; 0x294 <HELP>
- 4e8:	08 95       	ret
+ 4ee:	0e 94 4a 01 	call	0x294	; 0x294 <HELP>
+ 4f2:	08 95       	ret
 
-000004ea <setParity>:
+000004f4 <setParity>:
 		break;
 	}
 }
 
 void setParity(){
 	UART_Puts("\r\nWhat sort of parity is preferable?\r\n(N)o Parity, (O)dd parity, (E)ven Parity\r\n");
- 4ea:	8a e9       	ldi	r24, 0x9A	; 154
- 4ec:	92 e0       	ldi	r25, 0x02	; 2
- 4ee:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
+ 4f4:	8a e9       	ldi	r24, 0x9A	; 154
+ 4f6:	92 e0       	ldi	r25, 0x02	; 2
+ 4f8:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
 	ASCII = '\0';
- 4f2:	10 92 b4 04 	sts	0x04B4, r1	; 0x8004b4 <ASCII>
+ 4fc:	10 92 b4 04 	sts	0x04B4, r1	; 0x8004b4 <ASCII>
 	while(ASCII == '\0'){
 		
 		UART_Get();
- 4f6:	0e 94 e2 00 	call	0x1c4	; 0x1c4 <UART_Get>
+ 500:	0e 94 e2 00 	call	0x1c4	; 0x1c4 <UART_Get>
 }
 
 void setParity(){
 	UART_Puts("\r\nWhat sort of parity is preferable?\r\n(N)o Parity, (O)dd parity, (E)ven Parity\r\n");
 	ASCII = '\0';
 	while(ASCII == '\0'){
- 4fa:	80 91 b4 04 	lds	r24, 0x04B4	; 0x8004b4 <ASCII>
- 4fe:	88 23       	and	r24, r24
- 500:	d1 f3       	breq	.-12     	; 0x4f6 <setParity+0xc>
+ 504:	80 91 b4 04 	lds	r24, 0x04B4	; 0x8004b4 <ASCII>
+ 508:	88 23       	and	r24, r24
+ 50a:	d1 f3       	breq	.-12     	; 0x500 <setParity+0xc>
 		
 		UART_Get();
 	}
 	switch(ASCII){
- 502:	8e 36       	cpi	r24, 0x6E	; 110
- 504:	29 f0       	breq	.+10     	; 0x510 <setParity+0x26>
- 506:	8f 36       	cpi	r24, 0x6F	; 111
- 508:	41 f0       	breq	.+16     	; 0x51a <setParity+0x30>
- 50a:	85 36       	cpi	r24, 0x65	; 101
- 50c:	a9 f4       	brne	.+42     	; 0x538 <setParity+0x4e>
- 50e:	0f c0       	rjmp	.+30     	; 0x52e <setParity+0x44>
+ 50c:	8e 36       	cpi	r24, 0x6E	; 110
+ 50e:	29 f0       	breq	.+10     	; 0x51a <setParity+0x26>
+ 510:	8f 36       	cpi	r24, 0x6F	; 111
+ 512:	41 f0       	breq	.+16     	; 0x524 <setParity+0x30>
+ 514:	85 36       	cpi	r24, 0x65	; 101
+ 516:	a9 f4       	brne	.+42     	; 0x542 <setParity+0x4e>
+ 518:	0f c0       	rjmp	.+30     	; 0x538 <setParity+0x44>
 		
 		case 'N' | 'n':
 		UCSR0C |= (0<<5)&&(0<<4);
 		UART_Puts("\r\nParity = No Parity\r\n");
- 510:	8b ee       	ldi	r24, 0xEB	; 235
- 512:	92 e0       	ldi	r25, 0x02	; 2
- 514:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
+ 51a:	8b ee       	ldi	r24, 0xEB	; 235
+ 51c:	92 e0       	ldi	r25, 0x02	; 2
+ 51e:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
 		break;
- 518:	08 95       	ret
+ 522:	08 95       	ret
 		case 'O' | 'o':
 		UCSR0C |= (1<<5)&&(1<<4);
- 51a:	80 91 c2 00 	lds	r24, 0x00C2	; 0x8000c2 <__TEXT_REGION_LENGTH__+0x7e00c2>
- 51e:	81 60       	ori	r24, 0x01	; 1
- 520:	80 93 c2 00 	sts	0x00C2, r24	; 0x8000c2 <__TEXT_REGION_LENGTH__+0x7e00c2>
+ 524:	80 91 c2 00 	lds	r24, 0x00C2	; 0x8000c2 <__TEXT_REGION_LENGTH__+0x7e00c2>
+ 528:	81 60       	ori	r24, 0x01	; 1
+ 52a:	80 93 c2 00 	sts	0x00C2, r24	; 0x8000c2 <__TEXT_REGION_LENGTH__+0x7e00c2>
 		UART_Puts("\r\nParity = Odd Parity\r\n");
- 524:	82 e0       	ldi	r24, 0x02	; 2
- 526:	93 e0       	ldi	r25, 0x03	; 3
- 528:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
-		break;
- 52c:	08 95       	ret
-		case 'E' | 'e':
-		UCSR0C |= (1<<5)&&(0<<4);
-		UART_Puts("\r\nParity = Even Parity\r\n");
- 52e:	8a e1       	ldi	r24, 0x1A	; 26
+ 52e:	82 e0       	ldi	r24, 0x02	; 2
  530:	93 e0       	ldi	r25, 0x03	; 3
  532:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
 		break;
  536:	08 95       	ret
-		default:
-		UART_Puts(MS5);
- 538:	8d ef       	ldi	r24, 0xFD	; 253
+		case 'E' | 'e':
+		UCSR0C |= (1<<5)&&(0<<4);
+		UART_Puts("\r\nParity = Even Parity\r\n");
+ 538:	8a e1       	ldi	r24, 0x1A	; 26
  53a:	93 e0       	ldi	r25, 0x03	; 3
  53c:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
+		break;
+ 540:	08 95       	ret
+		default:
+		UART_Puts(MS5);
+ 542:	8d ef       	ldi	r24, 0xFD	; 253
+ 544:	93 e0       	ldi	r25, 0x03	; 3
+ 546:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
 		HELP();
- 540:	0e 94 4a 01 	call	0x294	; 0x294 <HELP>
- 544:	08 95       	ret
+ 54a:	0e 94 4a 01 	call	0x294	; 0x294 <HELP>
+ 54e:	08 95       	ret
 
-00000546 <setStopBitNum>:
+00000550 <setStopBitNum>:
 		break;
 	}
 }
 
 void setStopBitNum(){
 	UART_Puts("\r\nHow many stops bits is preferable?\r\n(1) bit or (2) bits\r\n");
- 546:	83 e3       	ldi	r24, 0x33	; 51
- 548:	93 e0       	ldi	r25, 0x03	; 3
- 54a:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
+ 550:	83 e3       	ldi	r24, 0x33	; 51
+ 552:	93 e0       	ldi	r25, 0x03	; 3
+ 554:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
 	ASCII = '\0';
- 54e:	10 92 b4 04 	sts	0x04B4, r1	; 0x8004b4 <ASCII>
+ 558:	10 92 b4 04 	sts	0x04B4, r1	; 0x8004b4 <ASCII>
 	while(ASCII == '\0'){
 		
 		UART_Get();
- 552:	0e 94 e2 00 	call	0x1c4	; 0x1c4 <UART_Get>
+ 55c:	0e 94 e2 00 	call	0x1c4	; 0x1c4 <UART_Get>
 }
 
 void setStopBitNum(){
 	UART_Puts("\r\nHow many stops bits is preferable?\r\n(1) bit or (2) bits\r\n");
 	ASCII = '\0';
 	while(ASCII == '\0'){
- 556:	80 91 b4 04 	lds	r24, 0x04B4	; 0x8004b4 <ASCII>
- 55a:	88 23       	and	r24, r24
- 55c:	d1 f3       	breq	.-12     	; 0x552 <setStopBitNum+0xc>
+ 560:	80 91 b4 04 	lds	r24, 0x04B4	; 0x8004b4 <ASCII>
+ 564:	88 23       	and	r24, r24
+ 566:	d1 f3       	breq	.-12     	; 0x55c <setStopBitNum+0xc>
 		
 		UART_Get();
 	}
 	switch(ASCII){
- 55e:	81 33       	cpi	r24, 0x31	; 49
- 560:	19 f0       	breq	.+6      	; 0x568 <setStopBitNum+0x22>
- 562:	82 33       	cpi	r24, 0x32	; 50
- 564:	31 f0       	breq	.+12     	; 0x572 <setStopBitNum+0x2c>
- 566:	0f c0       	rjmp	.+30     	; 0x586 <setStopBitNum+0x40>
+ 568:	81 33       	cpi	r24, 0x31	; 49
+ 56a:	19 f0       	breq	.+6      	; 0x572 <setStopBitNum+0x22>
+ 56c:	82 33       	cpi	r24, 0x32	; 50
+ 56e:	31 f0       	breq	.+12     	; 0x57c <setStopBitNum+0x2c>
+ 570:	0f c0       	rjmp	.+30     	; 0x590 <setStopBitNum+0x40>
 		
 		case '1':
 		UCSR0C |= (0<<3);
 		UART_Puts("\r\n# of Stop Bits = 1\r\n");
- 568:	8f e6       	ldi	r24, 0x6F	; 111
- 56a:	93 e0       	ldi	r25, 0x03	; 3
- 56c:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
+ 572:	8f e6       	ldi	r24, 0x6F	; 111
+ 574:	93 e0       	ldi	r25, 0x03	; 3
+ 576:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
 		break;
- 570:	08 95       	ret
+ 57a:	08 95       	ret
 		case '2':
 		UCSR0C |= (1<<3);
- 572:	80 91 c2 00 	lds	r24, 0x00C2	; 0x8000c2 <__TEXT_REGION_LENGTH__+0x7e00c2>
- 576:	88 60       	ori	r24, 0x08	; 8
- 578:	80 93 c2 00 	sts	0x00C2, r24	; 0x8000c2 <__TEXT_REGION_LENGTH__+0x7e00c2>
+ 57c:	80 91 c2 00 	lds	r24, 0x00C2	; 0x8000c2 <__TEXT_REGION_LENGTH__+0x7e00c2>
+ 580:	88 60       	ori	r24, 0x08	; 8
+ 582:	80 93 c2 00 	sts	0x00C2, r24	; 0x8000c2 <__TEXT_REGION_LENGTH__+0x7e00c2>
 		UART_Puts("\r\n# of Stop Bits = 2\r\n");
- 57c:	86 e8       	ldi	r24, 0x86	; 134
- 57e:	93 e0       	ldi	r25, 0x03	; 3
- 580:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
-		break;
- 584:	08 95       	ret
-		default:
-		UART_Puts(MS5);
- 586:	8d ef       	ldi	r24, 0xFD	; 253
+ 586:	86 e8       	ldi	r24, 0x86	; 134
  588:	93 e0       	ldi	r25, 0x03	; 3
  58a:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
+		break;
+ 58e:	08 95       	ret
+		default:
+		UART_Puts(MS5);
+ 590:	8d ef       	ldi	r24, 0xFD	; 253
+ 592:	93 e0       	ldi	r25, 0x03	; 3
+ 594:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
 		HELP();
- 58e:	0e 94 4a 01 	call	0x294	; 0x294 <HELP>
- 592:	08 95       	ret
+ 598:	0e 94 4a 01 	call	0x294	; 0x294 <HELP>
+ 59c:	08 95       	ret
 
-00000594 <Params>:
+0000059e <Params>:
 	}
 }
 
 void Params(void)					//Router for  USART parameter changes
 {
 	UART_Puts(MS7);
- 594:	8d e9       	ldi	r24, 0x9D	; 157
- 596:	93 e0       	ldi	r25, 0x03	; 3
- 598:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
+ 59e:	8d e9       	ldi	r24, 0x9D	; 157
+ 5a0:	93 e0       	ldi	r25, 0x03	; 3
+ 5a2:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
 	ASCII = '\0';
- 59c:	10 92 b4 04 	sts	0x04B4, r1	; 0x8004b4 <ASCII>
+ 5a6:	10 92 b4 04 	sts	0x04B4, r1	; 0x8004b4 <ASCII>
 	while(ASCII == '\0'){
 		
 		UART_Get();
- 5a0:	0e 94 e2 00 	call	0x1c4	; 0x1c4 <UART_Get>
+ 5aa:	0e 94 e2 00 	call	0x1c4	; 0x1c4 <UART_Get>
 
 void Params(void)					//Router for  USART parameter changes
 {
 	UART_Puts(MS7);
 	ASCII = '\0';
 	while(ASCII == '\0'){
- 5a4:	80 91 b4 04 	lds	r24, 0x04B4	; 0x8004b4 <ASCII>
- 5a8:	88 23       	and	r24, r24
- 5aa:	d1 f3       	breq	.-12     	; 0x5a0 <Params+0xc>
+ 5ae:	80 91 b4 04 	lds	r24, 0x04B4	; 0x8004b4 <ASCII>
+ 5b2:	88 23       	and	r24, r24
+ 5b4:	d1 f3       	breq	.-12     	; 0x5aa <Params+0xc>
 		
 		UART_Get();
 	}
 	switch(ASCII){                  //For each parameter change send to another router which handles setting the parameter.
- 5ac:	84 36       	cpi	r24, 0x64	; 100
- 5ae:	61 f0       	breq	.+24     	; 0x5c8 <Params+0x34>
- 5b0:	18 f4       	brcc	.+6      	; 0x5b8 <Params+0x24>
- 5b2:	82 36       	cpi	r24, 0x62	; 98
- 5b4:	31 f0       	breq	.+12     	; 0x5c2 <Params+0x2e>
- 5b6:	11 c0       	rjmp	.+34     	; 0x5da <Params+0x46>
- 5b8:	80 37       	cpi	r24, 0x70	; 112
- 5ba:	49 f0       	breq	.+18     	; 0x5ce <Params+0x3a>
- 5bc:	83 37       	cpi	r24, 0x73	; 115
- 5be:	51 f0       	breq	.+20     	; 0x5d4 <Params+0x40>
- 5c0:	0c c0       	rjmp	.+24     	; 0x5da <Params+0x46>
+ 5b6:	84 36       	cpi	r24, 0x64	; 100
+ 5b8:	61 f0       	breq	.+24     	; 0x5d2 <Params+0x34>
+ 5ba:	18 f4       	brcc	.+6      	; 0x5c2 <Params+0x24>
+ 5bc:	82 36       	cpi	r24, 0x62	; 98
+ 5be:	31 f0       	breq	.+12     	; 0x5cc <Params+0x2e>
+ 5c0:	11 c0       	rjmp	.+34     	; 0x5e4 <Params+0x46>
+ 5c2:	80 37       	cpi	r24, 0x70	; 112
+ 5c4:	49 f0       	breq	.+18     	; 0x5d8 <Params+0x3a>
+ 5c6:	83 37       	cpi	r24, 0x73	; 115
+ 5c8:	51 f0       	breq	.+20     	; 0x5de <Params+0x40>
+ 5ca:	0c c0       	rjmp	.+24     	; 0x5e4 <Params+0x46>
 		
 		case 'B' | 'b': baudRouter();
- 5c2:	0e 94 e5 01 	call	0x3ca	; 0x3ca <baudRouter>
+ 5cc:	0e 94 e5 01 	call	0x3ca	; 0x3ca <baudRouter>
 		break;
- 5c6:	08 95       	ret
+ 5d0:	08 95       	ret
 		case 'D' | 'd': setDataBitNum();
- 5c8:	0e 94 32 02 	call	0x464	; 0x464 <setDataBitNum>
+ 5d2:	0e 94 32 02 	call	0x464	; 0x464 <setDataBitNum>
 		break;
- 5cc:	08 95       	ret
+ 5d6:	08 95       	ret
 		case 'P' | 'p': setParity();
- 5ce:	0e 94 75 02 	call	0x4ea	; 0x4ea <setParity>
+ 5d8:	0e 94 7a 02 	call	0x4f4	; 0x4f4 <setParity>
 		break;
- 5d2:	08 95       	ret
+ 5dc:	08 95       	ret
 		case 'S' | 's': setStopBitNum();
- 5d4:	0e 94 a3 02 	call	0x546	; 0x546 <setStopBitNum>
+ 5de:	0e 94 a8 02 	call	0x550	; 0x550 <setStopBitNum>
 		break;
- 5d8:	08 95       	ret
+ 5e2:	08 95       	ret
 		default:
 		UART_Puts(MS5);
- 5da:	8d ef       	ldi	r24, 0xFD	; 253
- 5dc:	93 e0       	ldi	r25, 0x03	; 3
- 5de:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
+ 5e4:	8d ef       	ldi	r24, 0xFD	; 253
+ 5e6:	93 e0       	ldi	r25, 0x03	; 3
+ 5e8:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
 		HELP();
- 5e2:	0e 94 4a 01 	call	0x294	; 0x294 <HELP>
- 5e6:	08 95       	ret
+ 5ec:	0e 94 4a 01 	call	0x294	; 0x294 <HELP>
+ 5f0:	08 95       	ret
 
-000005e8 <Command>:
+000005f2 <Command>:
 	}
 }
 
 void Command(void)					//command interpreter
 {
 	UART_Puts(MS3);
- 5e8:	86 e2       	ldi	r24, 0x26	; 38
- 5ea:	94 e0       	ldi	r25, 0x04	; 4
- 5ec:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
+ 5f2:	86 e2       	ldi	r24, 0x26	; 38
+ 5f4:	94 e0       	ldi	r25, 0x04	; 4
+ 5f6:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
 	ASCII = '\0';						
- 5f0:	10 92 b4 04 	sts	0x04B4, r1	; 0x8004b4 <ASCII>
+ 5fa:	10 92 b4 04 	sts	0x04B4, r1	; 0x8004b4 <ASCII>
 	while (ASCII == '\0')
 	{
 		UART_Get();
- 5f4:	0e 94 e2 00 	call	0x1c4	; 0x1c4 <UART_Get>
+ 5fe:	0e 94 e2 00 	call	0x1c4	; 0x1c4 <UART_Get>
 
 void Command(void)					//command interpreter
 {
 	UART_Puts(MS3);
 	ASCII = '\0';						
 	while (ASCII == '\0')
- 5f8:	80 91 b4 04 	lds	r24, 0x04B4	; 0x8004b4 <ASCII>
- 5fc:	88 23       	and	r24, r24
- 5fe:	d1 f3       	breq	.-12     	; 0x5f4 <Command+0xc>
+ 602:	80 91 b4 04 	lds	r24, 0x04B4	; 0x8004b4 <ASCII>
+ 606:	88 23       	and	r24, r24
+ 608:	d1 f3       	breq	.-12     	; 0x5fe <Command+0xc>
 	{
 		UART_Get();
 	}
 	switch (ASCII)
- 600:	85 36       	cpi	r24, 0x65	; 101
- 602:	79 f0       	breq	.+30     	; 0x622 <Command+0x3a>
- 604:	18 f4       	brcc	.+6      	; 0x60c <Command+0x24>
- 606:	81 36       	cpi	r24, 0x61	; 97
- 608:	49 f0       	breq	.+18     	; 0x61c <Command+0x34>
- 60a:	11 c0       	rjmp	.+34     	; 0x62e <Command+0x46>
- 60c:	8c 36       	cpi	r24, 0x6C	; 108
- 60e:	19 f0       	breq	.+6      	; 0x616 <Command+0x2e>
- 610:	85 37       	cpi	r24, 0x75	; 117
- 612:	51 f0       	breq	.+20     	; 0x628 <Command+0x40>
- 614:	0c c0       	rjmp	.+24     	; 0x62e <Command+0x46>
+ 60a:	85 36       	cpi	r24, 0x65	; 101
+ 60c:	79 f0       	breq	.+30     	; 0x62c <Command+0x3a>
+ 60e:	18 f4       	brcc	.+6      	; 0x616 <Command+0x24>
+ 610:	81 36       	cpi	r24, 0x61	; 97
+ 612:	49 f0       	breq	.+18     	; 0x626 <Command+0x34>
+ 614:	11 c0       	rjmp	.+34     	; 0x638 <Command+0x46>
+ 616:	8c 36       	cpi	r24, 0x6C	; 108
+ 618:	19 f0       	breq	.+6      	; 0x620 <Command+0x2e>
+ 61a:	85 37       	cpi	r24, 0x75	; 117
+ 61c:	51 f0       	breq	.+20     	; 0x632 <Command+0x40>
+ 61e:	0c c0       	rjmp	.+24     	; 0x638 <Command+0x46>
 	{
 		case 'L' | 'l': LCD();
- 616:	0e 94 4f 01 	call	0x29e	; 0x29e <LCD>
+ 620:	0e 94 4f 01 	call	0x29e	; 0x29e <LCD>
 		break;
- 61a:	08 95       	ret
+ 624:	08 95       	ret
 		case 'A' | 'a': ADC();
- 61c:	0e 94 6d 01 	call	0x2da	; 0x2da <ADC>
+ 626:	0e 94 6d 01 	call	0x2da	; 0x2da <ADC>
 		break;
- 620:	08 95       	ret
+ 62a:	08 95       	ret
 		case 'E' | 'e': EEPROM();
- 622:	0e 94 c5 01 	call	0x38a	; 0x38a <EEPROM>
+ 62c:	0e 94 c5 01 	call	0x38a	; 0x38a <EEPROM>
 		break;
- 626:	08 95       	ret
+ 630:	08 95       	ret
 		case 'U' | 'u': Params();   //Send USART parameter changes to another router   
- 628:	0e 94 ca 02 	call	0x594	; 0x594 <Params>
+ 632:	0e 94 cf 02 	call	0x59e	; 0x59e <Params>
 		break;
- 62c:	08 95       	ret
+ 636:	08 95       	ret
 		default:
 		UART_Puts(MS5);
- 62e:	8d ef       	ldi	r24, 0xFD	; 253
- 630:	93 e0       	ldi	r25, 0x03	; 3
- 632:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
+ 638:	8d ef       	ldi	r24, 0xFD	; 253
+ 63a:	93 e0       	ldi	r25, 0x03	; 3
+ 63c:	0e 94 1b 01 	call	0x236	; 0x236 <UART_Puts>
 		HELP();
- 636:	0e 94 4a 01 	call	0x294	; 0x294 <HELP>
- 63a:	08 95       	ret
+ 640:	0e 94 4a 01 	call	0x294	; 0x294 <HELP>
+ 644:	08 95       	ret
 
-0000063c <main>:
+00000646 <main>:
 	}
 }
 
 int main(void)
 {
 	Mega328P_Init();
- 63c:	0e 94 79 00 	call	0xf2	; 0xf2 <Mega328P_Init>
+ 646:	0e 94 79 00 	call	0xf2	; 0xf2 <Mega328P_Init>
 	Banner();
- 640:	0e 94 3d 01 	call	0x27a	; 0x27a <Banner>
+ 64a:	0e 94 3d 01 	call	0x27a	; 0x27a <Banner>
 	while (1)
 	{
 		Command();				//infinite command loop
- 644:	0e 94 f4 02 	call	0x5e8	; 0x5e8 <Command>
- 648:	fd cf       	rjmp	.-6      	; 0x644 <main+0x8>
+ 64e:	0e 94 f9 02 	call	0x5f2	; 0x5f2 <Command>
+ 652:	fd cf       	rjmp	.-6      	; 0x64e <main+0x8>
 
-0000064a <__divmodhi4>:
- 64a:	97 fb       	bst	r25, 7
- 64c:	07 2e       	mov	r0, r23
- 64e:	16 f4       	brtc	.+4      	; 0x654 <__divmodhi4+0xa>
- 650:	00 94       	com	r0
- 652:	07 d0       	rcall	.+14     	; 0x662 <__divmodhi4_neg1>
- 654:	77 fd       	sbrc	r23, 7
- 656:	09 d0       	rcall	.+18     	; 0x66a <__divmodhi4_neg2>
- 658:	0e 94 39 03 	call	0x672	; 0x672 <__udivmodhi4>
- 65c:	07 fc       	sbrc	r0, 7
- 65e:	05 d0       	rcall	.+10     	; 0x66a <__divmodhi4_neg2>
- 660:	3e f4       	brtc	.+14     	; 0x670 <__divmodhi4_exit>
+00000654 <__divmodhi4>:
+ 654:	97 fb       	bst	r25, 7
+ 656:	07 2e       	mov	r0, r23
+ 658:	16 f4       	brtc	.+4      	; 0x65e <__divmodhi4+0xa>
+ 65a:	00 94       	com	r0
+ 65c:	07 d0       	rcall	.+14     	; 0x66c <__divmodhi4_neg1>
+ 65e:	77 fd       	sbrc	r23, 7
+ 660:	09 d0       	rcall	.+18     	; 0x674 <__divmodhi4_neg2>
+ 662:	0e 94 3e 03 	call	0x67c	; 0x67c <__udivmodhi4>
+ 666:	07 fc       	sbrc	r0, 7
+ 668:	05 d0       	rcall	.+10     	; 0x674 <__divmodhi4_neg2>
+ 66a:	3e f4       	brtc	.+14     	; 0x67a <__divmodhi4_exit>
 
-00000662 <__divmodhi4_neg1>:
- 662:	90 95       	com	r25
- 664:	81 95       	neg	r24
- 666:	9f 4f       	sbci	r25, 0xFF	; 255
- 668:	08 95       	ret
+0000066c <__divmodhi4_neg1>:
+ 66c:	90 95       	com	r25
+ 66e:	81 95       	neg	r24
+ 670:	9f 4f       	sbci	r25, 0xFF	; 255
+ 672:	08 95       	ret
 
-0000066a <__divmodhi4_neg2>:
- 66a:	70 95       	com	r23
- 66c:	61 95       	neg	r22
- 66e:	7f 4f       	sbci	r23, 0xFF	; 255
+00000674 <__divmodhi4_neg2>:
+ 674:	70 95       	com	r23
+ 676:	61 95       	neg	r22
+ 678:	7f 4f       	sbci	r23, 0xFF	; 255
 
-00000670 <__divmodhi4_exit>:
- 670:	08 95       	ret
+0000067a <__divmodhi4_exit>:
+ 67a:	08 95       	ret
 
-00000672 <__udivmodhi4>:
- 672:	aa 1b       	sub	r26, r26
- 674:	bb 1b       	sub	r27, r27
- 676:	51 e1       	ldi	r21, 0x11	; 17
- 678:	07 c0       	rjmp	.+14     	; 0x688 <__udivmodhi4_ep>
+0000067c <__udivmodhi4>:
+ 67c:	aa 1b       	sub	r26, r26
+ 67e:	bb 1b       	sub	r27, r27
+ 680:	51 e1       	ldi	r21, 0x11	; 17
+ 682:	07 c0       	rjmp	.+14     	; 0x692 <__udivmodhi4_ep>
 
-0000067a <__udivmodhi4_loop>:
- 67a:	aa 1f       	adc	r26, r26
- 67c:	bb 1f       	adc	r27, r27
- 67e:	a6 17       	cp	r26, r22
- 680:	b7 07       	cpc	r27, r23
- 682:	10 f0       	brcs	.+4      	; 0x688 <__udivmodhi4_ep>
- 684:	a6 1b       	sub	r26, r22
- 686:	b7 0b       	sbc	r27, r23
+00000684 <__udivmodhi4_loop>:
+ 684:	aa 1f       	adc	r26, r26
+ 686:	bb 1f       	adc	r27, r27
+ 688:	a6 17       	cp	r26, r22
+ 68a:	b7 07       	cpc	r27, r23
+ 68c:	10 f0       	brcs	.+4      	; 0x692 <__udivmodhi4_ep>
+ 68e:	a6 1b       	sub	r26, r22
+ 690:	b7 0b       	sbc	r27, r23
 
-00000688 <__udivmodhi4_ep>:
- 688:	88 1f       	adc	r24, r24
- 68a:	99 1f       	adc	r25, r25
- 68c:	5a 95       	dec	r21
- 68e:	a9 f7       	brne	.-22     	; 0x67a <__udivmodhi4_loop>
- 690:	80 95       	com	r24
- 692:	90 95       	com	r25
- 694:	bc 01       	movw	r22, r24
- 696:	cd 01       	movw	r24, r26
- 698:	08 95       	ret
+00000692 <__udivmodhi4_ep>:
+ 692:	88 1f       	adc	r24, r24
+ 694:	99 1f       	adc	r25, r25
+ 696:	5a 95       	dec	r21
+ 698:	a9 f7       	brne	.-22     	; 0x684 <__udivmodhi4_loop>
+ 69a:	80 95       	com	r24
+ 69c:	90 95       	com	r25
+ 69e:	bc 01       	movw	r22, r24
+ 6a0:	cd 01       	movw	r24, r26
+ 6a2:	08 95       	ret
 
-0000069a <_exit>:
- 69a:	f8 94       	cli
+000006a4 <_exit>:
+ 6a4:	f8 94       	cli
 
-0000069c <__stop_program>:
- 69c:	ff cf       	rjmp	.-2      	; 0x69c <__stop_program>
+000006a6 <__stop_program>:
+ 6a6:	ff cf       	rjmp	.-2      	; 0x6a6 <__stop_program>

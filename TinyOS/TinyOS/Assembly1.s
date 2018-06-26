@@ -17,7 +17,7 @@
 		   .equ	   UBRR0H,0xC5			//Baud Rate High Register addressed to 0xC5. This is the highest 4 bits of the USART baud rate.
 										//Together the two UBRR0L/H make up the value of the baud rate.
 		   .equ	   UCSR0A,0xC0			//USART Control and Status Register 0 A. Addressed to 0xC0
-		   .global UCSR0C
+		   .global UCSR0B
 		   .equ	   UCSR0B,0xC1			//USART Control and Status Register 0 B. Addressed to 0xC1
 		   .global UCSR0C
 		   .equ	   UCSR0C,0xC2			//USART Control and Status Register 0 C. Addressed to 0xC2

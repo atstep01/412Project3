@@ -77,15 +77,15 @@ void HELP(void)						//Display available Tiny OS Commands on Terminal
 
 void LCD(void)						//Lite LCD demo
 {
-	DATA = 0x34;					//Student Comment Here
+	DATA = 0x34;					//Function Set
 	LCD_Write_Command();
-	DATA = 0x08;					//Student Comment Here
+	DATA = 0x08;					//Display Off
 	LCD_Write_Command();
-	DATA = 0x02;					//Student Comment Here
+	DATA = 0x02;					//Return Home
 	LCD_Write_Command();
-	DATA = 0x06;					//Student Comment Here
+	DATA = 0x06;					//Entry Mode Set - I
 	LCD_Write_Command();
-	DATA = 0x0f;					//Student Comment Here
+	DATA = 0x0f;					//Display On
 	LCD_Write_Command();
 	LCD_Puts("Hello ECE412!");
 	/*
@@ -212,7 +212,7 @@ void setDataBitNum(){
 		break;
 		case '9':
 		UCSR0C |= (1<<2)&&(1<<1); //if bits 2-0 of USCR0C == 111
-		//UCSR0B |= (1<<2);
+		UCSR0B |= (1<<2);
 		UART_Puts("\r\n# of Data Bits = 9\r\n");
 		break;
 		default:
