@@ -27,6 +27,7 @@
 		   .equ	   UDRE0,0x05			//USART Data Register Empty. High when there the buffer is empty. Addressed to 0x05
 		   .equ	   ADCSRA,0x7A			//ADC(analog to digital converter) Control and Status Register A. Addressed to 0x7A
 		   .equ	   ADMUX,0x7C			//ADC multiplexer selection register. Addressed to 0x7C
+		   .global ADCSRB
 		   .equ	   ADCSRB,0x7B			//ADC Control and Status Register B. Addressed to 0x7B
 		   .equ	   DIDR0,0x7E			//Digital Input Disable Register 0. Used to turn off digital input buffers on corresponding ADC pin. Addressed to 0x7E
 		   .equ	   DIDR1,0x7F			//Digital Input Disable Register 1. Used to disable the AIN1/0 pin. Addressed to 0x7F
@@ -46,7 +47,10 @@
 		   .global    HADC				//High register for ADC
 		   .global    LADC				//Low Register for ADC
 		   .global    ASCII				//Character transfered and received by USART
-		   .global    DATA				//Defie global variable ***
+		   .global    DATA				//Define global variable ***
+		   .global    EEPROMH           //High part of EEPROM address
+		   .global    EEPROML			//Low part of EEPROM address
+		   .global    EEPROMV           //Value to be stored in EEPROM
 
 		   .set	      temp,0			//Adress temporary value to 0
 
@@ -208,9 +212,9 @@ A2V1:	   lds    r16,ADCSRA			//Load ADCSRA to r16
 EEPROM_Write:      
 		   sbic   EECR,EEPE
 		   rjmp   EEPROM_Write			; Wait for completion of previous write
-		   ldi    r18,0x00				; Set up address (r18:r17) in address register
-		   ldi    r17,0x05 
-		   ldi    r16,'F'				; Set up data in r16    
+		   lds    r18,EEPROMH			; Set up address (r18:r17) in address register
+		   lds    r17,EEPROML 
+		   lds    r16,EEPROMV			; Set up data in r16    
 		   out    EEARH, r18      
 		   out    EEARL, r17			      
 		   out    EEDR,r16				; Write data (r16) to Data Register  
@@ -222,8 +226,8 @@ EEPROM_Write:
 EEPROM_Read:					    
 		   sbic   EECR,EEPE    
 		   rjmp   EEPROM_Read			; Wait for completion of previous write
-		   ldi    r18,0x00				; Set up address (r18:r17) in EEPROM address register
-		   ldi    r17,0x05
+		   lds    r18,EEPROMH			; Set up address (r18:r17) in EEPROM address register
+		   lds    r17,EEPROML
 		   ldi    r16,0x00   
 		   out    EEARH,r18   
 		   out    EEARL,r17		   

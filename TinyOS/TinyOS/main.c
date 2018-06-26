@@ -5,6 +5,8 @@
 // Copyright 2018, All Rights Reserved
  
 //no includes, no ASF, no libraries
+#include <math.h>
+#include <stdio.h>
  
 const char MS1[] = "\r\nECE-412 ATMega328P Tiny OS";
 const char MS2[] = "\r\nby Eugene Rockey Copyright 2018, All Rights Reserved";
@@ -33,12 +35,16 @@ unsigned char ASCII;			//shared I/O variable with Assembly
 unsigned char DATA;				//shared internal variable with Assembly
 char HADC;						//shared ADC variable with Assembly
 char LADC;						//shared ADC variable with Assembly
+char EEPROMH;					//shared most significant byte of the EEPROM address
+char EEPROML;					//shared least significant byte of the EEPROM address
+char EEPROMV;					//shared value to be written to EEPROM
 
 unsigned int UBRRValue = 0;				//shared variable for setting baud rate
 extern unsigned char UBRR0L asm("UBRR0L");
 extern unsigned char UBRR0H asm("UBRR0H");
 extern unsigned char UCSR0C asm("UCSR0C");
 extern unsigned char UCSR0B asm("UCSR0B");
+extern unsigned char ADCSRB asm("ADCSRB");
 
 
 char volts[5];					//string buffer for ADC output
@@ -98,35 +104,97 @@ void LCD(void)						//Lite LCD demo
 
 void ADC(void)						//Lite Demo of the Analog to Digital Converter
 {
-	volts[0x1]='.';
-	volts[0x3]=' ';
-	volts[0x4]= 0;
-	ADC_Get();
-	Acc = (((int)HADC) * 0x100 + (int)(LADC))*0xA;
-	volts[0x0] = 48 + (Acc / 0x7FE);
-	Acc = Acc % 0x7FE;
-	volts[0x2] = ((Acc *0xA) / 0x7FE) + 48;
-	Acc = (Acc * 0xA) % 0x7FE;
-	if (Acc >= 0x3FF) volts[0x2]++;
-	if (volts[0x2] == 58)
-	{
-		volts[0x2] = 48;
-		volts[0x0]++;
-	}
-	UART_Puts(volts);
+	volts[0x1]='.';  
+	volts[0x3]=' ';  
+	volts[0x4]= 0;  
+	ADC_Get();  
+	Acc = (((int)HADC) * 0x100 + ((int)LADC))*0xA; 
+	volts[0x0] = 48 + (Acc / 0x7FE);  
+	Acc = Acc % 0x7FE;  
+	volts[0x2] = ((Acc *0xA) / 0x7FE) + 48;  
+	Acc = (Acc * 0xA) % 0x7FE;  
+	if (Acc >= 0x3FF) 
+		volts[0x2]++;  
+	if (volts[0x2] == 58){
+		volts[0x2] = 48;  
+		volts[0x0]++;  
+	}  
+	UART_Puts(volts);  
 	UART_Puts(MS6);
-	/*
-		Re-engineer this subroutine to display temperature in degrees Fahrenheit on the Terminal.
-		The potentiometer simulates a thermistor, its varying resistance simulates the
-		varying resistance of a thermistor as it is heated and cooled. See the thermistor
-		equations in the lab 3 folder. User must always be able to return to command line.
-	*/
 	
+	/* Re-engineer this subroutine to display temperature in degrees Fahrenheit on the Terminal. 
+	The potentiometer simulates a thermistor, its varying resistance simulates the varying resistance of a thermistor as it is heated and cooled. 
+	See the thermistor equations in the lab 3 folder. User must always be able to return to command line.  */
+}
+
+void writeEEPROM(){
+	UART_Puts("\r\nEnter the most significant bit of the address to be written to\r\n");
+	ASCII = '\0';
+	while(ASCII == '\0'){
+		
+		UART_Get();
+	}
+	EEPROMH = ASCII;
+	UART_Puts("\r\nEnter the least significant bit of the address to be written to\r\n");
+	ASCII = '\0';
+	while(ASCII == '\0'){
+		
+		UART_Get();
+	}
+	EEPROML = ASCII;
+	UART_Puts("\r\nEnter an 8 bit value to store\r\n");
+	ASCII = '\0';
+	while(ASCII == '\0'){
+		
+		UART_Get();
+	}
+	EEPROMV = ASCII;
+	EEPROM_Write();
+	UART_Puts("\r\nThe data has been stored in EEPROM");
+	
+}
+
+void readEEPROM(){
+	UART_Puts("\r\nEnter the most significant bit of the address to be read\r\n");
+	ASCII = '\0';
+	while(ASCII == '\0'){
+		
+		UART_Get();
+	}
+	EEPROMH = ASCII;
+	UART_Puts("\r\nEnter the least significant bit of the address to be read\r\n");
+	ASCII = '\0';
+	while(ASCII == '\0'){
+		
+		UART_Get();
+	}
+	EEPROML = ASCII;
+	EEPROM_Read();
+	UART_Put();
+	UART_Puts("\r\nThe data has been stored in EEPROM");
 }
 
 void EEPROM(void)
 {
-	UART_Puts("\r\nEEPROM Write and Read.");
+	UART_Puts("\r\nEEPROM (W)rite or (R)Read.\r\n");
+	ASCII = '\0';
+	while(ASCII == '\0'){
+		
+		UART_Get();
+	}
+	switch(ASCII){
+		
+		case 'W' | 'w': writeEEPROM();
+		break;
+		case 'R' | 'r': readEEPROM();
+		break;
+		default:
+		UART_Puts(MS5);
+		HELP();
+		break;
+	}
+	
+	
 	/*
 	Re-engineer this subroutine so that a byte of data can be written to any address in EEPROM
 	during run-time via the command line and the same byte of data can be read back and verified after the power to
@@ -134,13 +202,9 @@ void EEPROM(void)
 	8-bit data value. Utilize the following two given Assembly based drivers to communicate with the EEPROM. You
 	may modify the EEPROM drivers as needed. User must be able to always return to command line.
 	*/
-	UART_Puts("\r\n");
-	EEPROM_Write();
-	UART_Puts("\r\n");
-	EEPROM_Read();
-	UART_Put();
-	UART_Puts("\r\n");
 }
+
+
 
 void setBaud(int i){         //Helper function that changes the baud rate
 	UBRRValue = i;			 //Set UBBRBalue to preferred baud rate
