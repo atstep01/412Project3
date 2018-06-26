@@ -34,10 +34,12 @@ unsigned char DATA;				//shared internal variable with Assembly
 char HADC;						//shared ADC variable with Assembly
 char LADC;						//shared ADC variable with Assembly
 
-int UBBRValue = 0;				//shared variable for setting baud rate
-unsigned char UBBR0L;
-unsigned char UBBR0H;
-unsigned char UCSR0C;
+unsigned int UBRRValue = 0;				//shared variable for setting baud rate
+extern unsigned char UBRR0L asm("UBRR0L");
+extern unsigned char UBRR0H asm("UBRR0H");
+extern unsigned char UCSR0C asm("UCSR0C");
+extern unsigned char UCSR0B asm("UCSR0B");
+
 
 char volts[5];					//string buffer for ADC output
 int Acc;						//Accumulator for ADC use
@@ -141,13 +143,15 @@ void EEPROM(void)
 }
 
 void setBaud(int i){         //Helper function that changes the baud rate
-	UBBRValue = i;			 //Set UBBRBalue to preferred baud rate
-	UBBR0H = (unsigned char) (UBBRValue << 8); //Upper four bits of the baud rate go here.
-	UBBR0L = (unsigned char) UBBRValue;		   //The rest of the baud rate goes here.
+	UBRRValue = i;			 //Set UBBRBalue to preferred baud rate
+	UBRR0L = (unsigned char) UBRRValue;		   //The rest of the baud rate goes here.
+	UBRR0H = (unsigned char) (UBRRValue >> 8); //Upper four bits of the baud rate go here.
+	
+	
 }
 
 void baudRouter(){
-	UART_Puts("What baud rate is preferable?\n1: 9600, 2: 14400, 3: 19200, 4: 28800, 5: 38400");
+	UART_Puts("\r\nWhat baud rate is preferable?\r\n1: 9600, 2: 14400, 3: 19200, 4: 28800, 5: 38400\r\n");
 	ASCII = '\0';
 	while(ASCII == '\0'){
 		
@@ -155,20 +159,20 @@ void baudRouter(){
 	}
 	switch(ASCII){
 		
-		case '1': setBaud(9600);
-		UART_Puts("Baud rate == 9600.\n UCSR0C: " + UCSR0C);
+		case '1': setBaud(103);
+		UART_Puts("\r\nBaud rate = 9600.\r\n");
 		break;
-		case '2': setBaud(14400);
-		UART_Puts("Baud rate == 14400\n UCSR0C: " + UCSR0C);
+		case '2': setBaud(68);
+		UART_Puts("\r\nBaud rate = 14400\r\n");
 		break;
-		case '3': setBaud(19200);
-		UART_Puts("Baud rate == 19200");
+		case '3': setBaud(51);
+		UART_Puts("\r\nBaud rate = 19200\r\n");
 		break;
-		case '4': setBaud(28800);
-		UART_Puts("Baud rate == 28800");
+		case '4': setBaud(34);
+		UART_Puts("\r\nBaud rate = 28800\r\n");
 		break;
-		case '5': setBaud(38400);
-		UART_Puts("Baud rate == 38400");
+		case '5': setBaud(25);
+		UART_Puts("\r\nBaud rate = 38400\r\n");
 		break;
 		default:
 		UART_Puts(MS5);
@@ -178,7 +182,7 @@ void baudRouter(){
 }
 
 void setDataBitNum(){
-	UART_Puts("How many data bits are preferable?\n 5, 6, 7, 8 , or 9 bits");
+	UART_Puts("\r\nHow many data bits are preferable?\r\n5, 6, 7, 8 , or 9 bits\r\n");
 	ASCII = '\0';
 	while(ASCII == '\0'){
 		
@@ -188,28 +192,28 @@ void setDataBitNum(){
 		
 		case '5':
 		UCSR0C |= (0<<2)&&(0<<1); //if the bits 2-0 of UCSR0C == 000
-		UCSR0B |= (0<<2)
-		UART_Puts("# of Data Bits == 5");
+		UCSR0B |= (0<<2);
+		UART_Puts("\r\n# of Data Bits = 5\r\n");
 		break;
 		case '6':
 		UCSR0C |= (0<<2)&&(1<<1); //if bits 2-0 of UCSR0C == 001
-		UCSR0B |= (0<<2)
-		UART_Puts("# of Data Bits == 6");
+		UCSR0B |= (0<<2);
+		UART_Puts("\r\n# of Data Bits = 6\r\n");
 		break;
 		case '7':
 		UCSR0C |= (1<<2)&&(0<<1); //if bits 2-0 of UCSr0C == 010
-		UCSR0B |= (0<<2)
-		UART_Puts("# of Data Bits == 7");
+		UCSR0B |= (0<<2);
+		UART_Puts("\r\n# of Data Bits = 7\r\n");
 		break;
 		case '8':
 		UCSR0C |= (1<<2)&&(1<<1); //if bits 2-0 of USCR0C == 011
-		UCSR0B |= (0<<2)
-		UART_Puts("# of Data Bits == 8");
+		UCSR0B |= (0<<2);
+		UART_Puts("\r\n# of Data Bits = 8\r\n");
 		break;
 		case '9':
 		UCSR0C |= (1<<2)&&(1<<1); //if bits 2-0 of USCR0C == 111
-		UCSR0B |= (1<<2)
-		UART_Puts("# of Data Bits == 9");
+		//UCSR0B |= (1<<2);
+		UART_Puts("\r\n# of Data Bits = 9\r\n");
 		break;
 		default:
 		UART_Puts(MS5);
@@ -219,7 +223,7 @@ void setDataBitNum(){
 }
 
 void setParity(){
-	UART_Puts("What sort of parity is preferable?\n (N)o Parity, (O)dd parity, (E)ven Parity");
+	UART_Puts("\r\nWhat sort of parity is preferable?\r\n(N)o Parity, (O)dd parity, (E)ven Parity\r\n");
 	ASCII = '\0';
 	while(ASCII == '\0'){
 		
@@ -229,15 +233,15 @@ void setParity(){
 		
 		case 'N' | 'n':
 		UCSR0C |= (0<<5)&&(0<<4);
-		UART_Puts("Parity == No Parity");
+		UART_Puts("\r\nParity = No Parity\r\n");
 		break;
 		case 'O' | 'o':
 		UCSR0C |= (1<<5)&&(1<<4);
-		UART_Puts("Parity == Odd Parity");
+		UART_Puts("\r\nParity = Odd Parity\r\n");
 		break;
 		case 'E' | 'e':
 		UCSR0C |= (1<<5)&&(0<<4);
-		UART_Puts("Parity == Even Parity");
+		UART_Puts("\r\nParity = Even Parity\r\n");
 		break;
 		default:
 		UART_Puts(MS5);
@@ -247,7 +251,7 @@ void setParity(){
 }
 
 void setStopBitNum(){
-	UART_Puts("How many stops bits is preferable?\n (1) bit or (2) bits");
+	UART_Puts("\r\nHow many stops bits is preferable?\r\n(1) bit or (2) bits\r\n");
 	ASCII = '\0';
 	while(ASCII == '\0'){
 		
@@ -257,11 +261,11 @@ void setStopBitNum(){
 		
 		case '1':
 		UCSR0C |= (0<<3);
-		UART_Puts("# of Stop Bits == 1");
+		UART_Puts("\r\n# of Stop Bits = 1\r\n");
 		break;
 		case '2':
 		UCSR0C |= (1<<3);
-		UART_Puts("# of Stop Bits == 2");
+		UART_Puts("\r\n# of Stop Bits = 2\r\n");
 		break;
 		default:
 		UART_Puts(MS5);
