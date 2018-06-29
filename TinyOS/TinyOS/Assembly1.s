@@ -107,6 +107,7 @@ LCD_Write_Command:
 		   call	  UART_On				//resume receiving/transmitting
 		   ret							//return from where called
 
+.global LCD_Delay
 LCD_Delay:
 		   ldi    r16,0xFA				//set outer loop iterator
 D0:	       ldi    r17,0xFF				//set inner loop iterator
@@ -181,6 +182,16 @@ UART_Get:
 		   sts    ASCII,r16				//load character in the USART data register into ASCII
 		   ret							//Return from where called
 
+.global UART_Get2
+UART_Get2:
+			lds    r16,UCSR0A			//student comment here
+			ldi	   r18,2
+loop:    	dec	   r18
+			brne   loop				    //student comment here
+		    lds    r16,UDR0				//student comment here
+		    sts    test,r16				//student comment here
+		    ret	
+
 .global UART_Put
 UART_Put:
 		   lds    r17,UCSR0A			//Set r16 to UCSR0A
@@ -191,11 +202,20 @@ UART_Put:
 		   sts    UDR0,r16				//Store r16 into the USART data register
 		   ret							//return from where called.
 
+.global UART_Get_NoInterrupt
+UART_Get_NoInterrupt:
+		   lds    r16,UDR0
+		   sts    ASCII,r16
+		   ret
+
 .global ADC_Get
 ADC_Get:
 		   ldi    r16,0xC7				//set r16 to 0xC7, 11000111
-		   sts    ADCSRA,r16			//Sets bits 7,6,2,1,0 of the ADCSRA
-										//Bits 7 and 6 enable and start the ADC conversion 
+		   ldi    r17,0x00
+		   sts    ADCSRB,r17  
+		   sts    ADCSRA,r16			//Sets bits 7,6,5,2,1,0 of the ADCSRA
+										//Bits 7 and 6 enable and start the ADC conversion
+										//Bit 5 allows the ADC to run in free run mode as long as ADTS[2:0] are set to zero
 										//Bits 2-0 Set the division factor to 128
 A2V1:	   lds    r16,ADCSRA			//Load ADCSRA to r16
 		   sbrc	  r16,ADSC				//if bit 6 is low skip
