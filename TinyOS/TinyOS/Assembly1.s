@@ -27,6 +27,7 @@
 		   .equ	   UDRE0,0x05			//USART Data Register Empty. High when there the buffer is empty. Addressed to 0x05
 		   .equ	   ADCSRA,0x7A			//ADC(analog to digital converter) Control and Status Register A. Addressed to 0x7A
 		   .equ	   ADMUX,0x7C			//ADC multiplexer selection register. Addressed to 0x7C
+		   .global ADCSRB
 		   .equ	   ADCSRB,0x7B			//ADC Control and Status Register B. Addressed to 0x7B
 		   .equ	   DIDR0,0x7E			//Digital Input Disable Register 0. Used to turn off digital input buffers on corresponding ADC pin. Addressed to 0x7E
 		   .equ	   DIDR1,0x7F			//Digital Input Disable Register 1. Used to disable the AIN1/0 pin. Addressed to 0x7F
@@ -46,7 +47,10 @@
 		   .global    HADC				//High register for ADC
 		   .global    LADC				//Low Register for ADC
 		   .global    ASCII				//Character transfered and received by USART
-		   .global    DATA				//Defie global variable ***
+		   .global    DATA				//Define global variable ***
+		   .global    EEPROMH           //High part of EEPROM address
+		   .global    EEPROML			//Low part of EEPROM address
+		   .global    EEPROMV           //Value to be stored in EEPROM
 
 		   .set	      temp,0			//Adress temporary value to 0
 
@@ -103,6 +107,7 @@ LCD_Write_Command:
 		   call	  UART_On				//resume receiving/transmitting
 		   ret							//return from where called
 
+.global LCD_Delay
 LCD_Delay:
 		   ldi    r16,0xFA				//set outer loop iterator
 D0:	       ldi    r17,0xFF				//set inner loop iterator
@@ -177,6 +182,16 @@ UART_Get:
 		   sts    ASCII,r16				//load character in the USART data register into ASCII
 		   ret							//Return from where called
 
+.global UART_Get2
+UART_Get2:
+			lds    r16,UCSR0A			//student comment here
+			ldi	   r18,2
+loop:    	dec	   r18
+			brne   loop				    //student comment here
+		    lds    r16,UDR0				//student comment here
+		    sts    test,r16				//student comment here
+		    ret	
+
 .global UART_Put
 UART_Put:
 		   lds    r17,UCSR0A			//Set r16 to UCSR0A
@@ -187,11 +202,20 @@ UART_Put:
 		   sts    UDR0,r16				//Store r16 into the USART data register
 		   ret							//return from where called.
 
+.global UART_Get_NoInterrupt
+UART_Get_NoInterrupt:
+		   lds    r16,UDR0
+		   sts    ASCII,r16
+		   ret
+
 .global ADC_Get
 ADC_Get:
 		   ldi    r16,0xC7				//set r16 to 0xC7, 11000111
-		   sts    ADCSRA,r16			//Sets bits 7,6,2,1,0 of the ADCSRA
-										//Bits 7 and 6 enable and start the ADC conversion 
+		   ldi    r17,0x00
+		   sts    ADCSRB,r17  
+		   sts    ADCSRA,r16			//Sets bits 7,6,5,2,1,0 of the ADCSRA
+										//Bits 7 and 6 enable and start the ADC conversion
+										//Bit 5 allows the ADC to run in free run mode as long as ADTS[2:0] are set to zero
 										//Bits 2-0 Set the division factor to 128
 A2V1:	   lds    r16,ADCSRA			//Load ADCSRA to r16
 		   sbrc	  r16,ADSC				//if bit 6 is low skip
@@ -208,9 +232,9 @@ A2V1:	   lds    r16,ADCSRA			//Load ADCSRA to r16
 EEPROM_Write:      
 		   sbic   EECR,EEPE
 		   rjmp   EEPROM_Write			; Wait for completion of previous write
-		   ldi    r18,0x00				; Set up address (r18:r17) in address register
-		   ldi    r17,0x05 
-		   ldi    r16,'F'				; Set up data in r16    
+		   lds    r18,EEPROMH			; Set up address (r18:r17) in address register
+		   lds    r17,EEPROML 
+		   lds    r16,EEPROMV			; Set up data in r16    
 		   out    EEARH, r18      
 		   out    EEARL, r17			      
 		   out    EEDR,r16				; Write data (r16) to Data Register  
@@ -222,8 +246,8 @@ EEPROM_Write:
 EEPROM_Read:					    
 		   sbic   EECR,EEPE    
 		   rjmp   EEPROM_Read			; Wait for completion of previous write
-		   ldi    r18,0x00				; Set up address (r18:r17) in EEPROM address register
-		   ldi    r17,0x05
+		   lds    r18,EEPROMH			; Set up address (r18:r17) in EEPROM address register
+		   lds    r17,EEPROML
 		   ldi    r16,0x00   
 		   out    EEARH,r18   
 		   out    EEARL,r17		   
